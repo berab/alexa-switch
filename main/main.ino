@@ -1,34 +1,8 @@
-/*
-  Web client
 
-  This sketch connects to a website (http://arduino.cc)
-  using the WiFi module.
-
-  created 13 July 2010
-  by dlf (Metodo2 srl)
-  modified 31 May 2012
-  by Tom Igoe
-*/
-#define D4 2
-
-// void setup() {
-//   pinMode(D4, OUTPUT);
-//   Serial.begin(9600);
-//   Serial.println("selaminaleykum");
-// }  
-
-// void loop() {
-//   delay(1000);
-//   digitalWrite(D4, LOW);
-//   Serial.println("bi saniye oldu");
-//   // delay(100);
-//   // digitalWrite(D1, HIGH);
-//   // digitalWrite(D4, HIGH);
-//   // delay(100);
-//   // digitalWrite(D4, LOW);
-// }
 #include <ESP8266WiFi.h>
+#include "ESPAsyncWebServer.h"
 
+#define D4 2
 #ifndef STASSID
 #define STASSID "ssid"
 #define STAPSK  "pass"
@@ -36,35 +10,16 @@
 
 const char* ssid = STASSID;
 const char* pass = STAPSK;
+const char* http_username = "admin";
+const char* http_password = "admin";
+const char* print_this = "<h1>Print that</h1>";
 
-const char* server = "arduino.cc";
-
-WiFiClient client;
-
-
-void handleRoot() {
-  String outputState = "LOW";
-  if (digitalRead(ledPin) == HIGH) {
-    outputState = "HIGH";
-  }
-
-  String html = "<html><body>";
-  html += "<h1>ESP8266 Web Server</h1>";
-  html += "<p>LED Pin is currently " + outputState + "</p>";
-  html += "<p><a href=\"/on\">Turn On</a></p>";
-  html += "<p><a href=\"/off\">Turn Off</a></p>";
-  html += "</body></html>";
-
-  server.send(200, "text/html", html);
-}
-
-void handleOn() {
-  digitalWrite(ledPin, HIGH);
-  server.sendHeader("Location", "/");
-  server.send(303);
-}
+AsyncWebServer server(80);
 
 void setup() {
+  pinMode(D4, OUTPUT);
+  digitalWrite(D4, LOW); // On at first (When D4-> Low, A0 left->ON)
+
   Serial.begin(115200);
   delay(10);
 
@@ -74,44 +29,34 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
-
+  Serial.print("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
   Serial.println("");
   Serial.println("WiFi connected");
+  
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
+    request->send(200, "text/html", "<html><body><button onclick=\"toggleLed()\">Toggle LED</button><script>function toggleLed(){var xhr = new XMLHttpRequest();xhr.open('GET', '/toggle', true);xhr.send();}</script></body></html>");
+  });
 
-  Serial.println("Starting connection to server...");
-  if (client.connect(server, 80)) {
-    Serial.println("connected to server");
-    // Make a HTTP request:
-    client.println("GET /asciilogo.txt HTTP/1.1");
-    client.print("Host: ");
-    client.println(server);
-    client.println("Connection: close");
-    client.println();
-  }
+  server.on("/toggle", HTTP_GET, [](AsyncWebServerRequest* request) {
+    digitalWrite(D4, !digitalRead(D4));
+    request->send(200, "text/plain", "LED state changed");
+  });
+
+  // Start server
+  server.begin();
+  Serial.print("HTTP server started at ");
+  Serial.println(WiFi.localIP());
 }
 
 void loop() {
-
   // if there are incoming bytes available
   // from the server, read them and print them:
-  while (client.available()) {
-    char c = client.read();
-    Serial.write(c);
-  }
-
-  // if the server's disconnected, stop the client:
-  if (!client.connected()) {
-    Serial.println();
-    Serial.println("disconnecting from server.");
-    client.stop();
-
-    // do nothing forevermore:
-    while (true) {
-      delay(100);
-    }
+  if (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print("The device is disconnected. Server is down xd");
   }
 }
