@@ -15,7 +15,7 @@
 //   pinMode(D4, OUTPUT);
 //   Serial.begin(9600);
 //   Serial.println("selaminaleykum");
-// }
+// }  
 
 // void loop() {
 //   delay(1000);
@@ -30,8 +30,8 @@
 #include <ESP8266WiFi.h>
 
 #ifndef STASSID
-#define STASSID "FRITZ!Box 6820 RP"
-#define STAPSK  "34383272287906888123"
+#define STASSID "ssid"
+#define STAPSK  "pass"
 #endif
 
 const char* ssid = STASSID;
@@ -40,6 +40,29 @@ const char* pass = STAPSK;
 const char* server = "arduino.cc";
 
 WiFiClient client;
+
+
+void handleRoot() {
+  String outputState = "LOW";
+  if (digitalRead(ledPin) == HIGH) {
+    outputState = "HIGH";
+  }
+
+  String html = "<html><body>";
+  html += "<h1>ESP8266 Web Server</h1>";
+  html += "<p>LED Pin is currently " + outputState + "</p>";
+  html += "<p><a href=\"/on\">Turn On</a></p>";
+  html += "<p><a href=\"/off\">Turn Off</a></p>";
+  html += "</body></html>";
+
+  server.send(200, "text/html", html);
+}
+
+void handleOn() {
+  digitalWrite(ledPin, HIGH);
+  server.sendHeader("Location", "/");
+  server.send(303);
+}
 
 void setup() {
   Serial.begin(115200);
