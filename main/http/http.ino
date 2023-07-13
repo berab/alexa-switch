@@ -1,11 +1,12 @@
 
 #include <ESP8266WiFi.h>
 #include "ESPAsyncWebServer.h"
+#include <ESP8266HTTPClient.h>
 
 #define D4 2
 #ifndef STASSID
-#define STASSID "ssid"
-#define STAPSK  "pass"
+#define STASSID "FRITZ!Box 6820 RP"
+#define STAPSK  "34383272287906888123"
 #endif
 
 const char* ssid = STASSID;
@@ -45,6 +46,13 @@ void setup() {
     digitalWrite(D4, !digitalRead(D4));
     request->send(200, "text/plain", "LED state changed");
   });
+
+  server.on("/dummy", HTTP_GET, [](AsyncWebServerRequest* request) {
+    digitalWrite(D4, !digitalRead(D4));
+    request->send(200, "text/plain", "LED state changed");
+  });
+
+  
 
   // Start server
   server.begin();
