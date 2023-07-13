@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#jnclude <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "fauxmoESP.h"
 
@@ -7,8 +7,8 @@
 
 #define SERIAL_BAUDRATE 115200
 
-#define WIFI_SSID "FRITZ!Box 6820 RP"
-#define WIFI_PASS "34383272287906888123"
+#define WIFI_SSID "ssid"
+#define WIFI_PASS ""pass
 
 #define LAMP_1 "lamp one"
 
