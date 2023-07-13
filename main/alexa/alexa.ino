@@ -43,12 +43,9 @@ void setup() {
   wifiSetup();
 
   // LED
-  pinMode(RELAY_PIN_1, OUTPUT);
-  digitalWrite(RELAY_PIN_1, HIGH);
+  pinMode(OUT1, OUTPUT);
+  digitalWrite(OUT1, HIGH);
 
-  pinMode(RELAY_PIN_2, OUTPUT);
-  digitalWrite(RELAY_PIN_2, HIGH);
-  
   fauxmo.createServer(true); // not needed, this is the default value
   fauxmo.setPort(80); // This is required for gen3 devices
 
