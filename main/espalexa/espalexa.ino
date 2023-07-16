@@ -15,9 +15,7 @@ boolean connectWifi();
 #define OUT1 2 // D4
 
 //callback functions
-void firstLightChanged(uint8_t brightness);
-void secondLightChanged(uint8_t brightness);
-void thirdLightChanged(uint8_t brightness);
+void corridorLightChanged(uint8_t brightness);
 
 // Change this!!
 const char* ssid = "wifi-ssid";
