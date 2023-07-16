@@ -5,8 +5,8 @@
 
 #define D4 2
 #ifndef STASSID
-#define STASSID "FRITZ!Box 6820 RP"
-#define STAPSK  "34383272287906888123"
+#define STASSID "wifi_name"
+#define STAPSK  "xxx"
 #endif
 
 const char* ssid = STASSID;

@@ -7,8 +7,8 @@
 
 #define SERIAL_BAUDRATE 115200
 
-#define WIFI_SSID "FRITZ!Box 6820 RP"
-#define WIFI_PASS "34383272287906888123"
+#define WIFI_SSID "wifi_name"
+#define WIFI_PASS "xxx"
 
 #define LAMP_1 "lamp one"
 
